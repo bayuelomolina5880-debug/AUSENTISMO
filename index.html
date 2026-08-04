@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Gerencial - Ausentismo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-blue: #002878;
+            --primary-green: #009933;
+            --light-bg: #f4f7f6;
+            --white: #ffffff;
+            --text-dark: #333333;
+            --border-color: #e0e0e0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--white);
+            color: var(--primary-blue);
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-bottom: 4px solid var(--primary-green);
+        }
+        .logo-container img {
+            height: 80px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        h2 {
+            color: var(--primary-blue);
+            border-bottom: 2px solid var(--primary-green);
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-top: 4px solid var(--primary-blue);
+        }
+        .card h3 {
+            margin: 0 0 10px 0;
+            color: #666;
+            font-size: 16px;
+        }
+        .card .value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary-green);
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .chart-container, .text-section {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .text-section {
+            border-left: 6px solid var(--primary-green);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .search-box {
+            margin-bottom: 20px;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 6px solid var(--primary-blue);
+        }
+        select, button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+        button {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            cursor: pointer;
+        }
+        .personal-dashboard { display: none; margin-top: 20px; }
+        .personal-charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo-container">
+        <!-- Logo Institucional -->
+        <img src="LOGO CHU (2).jpg" alt="Logo Institucional">
+    </div>
+    <h1>Dashboard Ejecutivo de Ausentismo</h1>
+</header>
+
+<div class="container">
+    
+    <h2>Indicadores Clave (KPIs) por Sección</h2>
+    <div class="summary-cards">
+        <div class="card">
+            <h3>Preescolar</h3>
+            <div class="value">182</div>
+            <div style="font-size:12px; color:#888;">Días perdidos</div>
+        </div>
+        <div class="card">
+            <h3>Primaria</h3>
+            <div class="value">204</div>
+            <div style="font-size:12px; color:#888;">Días perdidos</div>
+        </div>
+        <div class="card">
+            <h3>Secundaria</h3>
+            <div class="value">139</div>
+            <div style="font-size:12px; color:#888;">Días perdidos</div>
+        </div>
+        <div class="card">
+            <h3>Administrativo</h3>
+            <div class="value">70</div>
+            <div style="font-size:12px; color:#888;">Días perdidos</div>
+        </div>
+    </div>
+
+    <h2>Panorama General (Gráficos)</h2>
+    <div class="charts-grid">
+        <div class="chart-container">
+            <canvas id="chartSecciones"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="chartMotivos"></canvas>
+        </div>
+        <div class="chart-container" style="grid-column: 1 / -1;">
+            <canvas id="chartMeses"></canvas>
+        </div>
+    </div>
+
+    <h2>Análisis de Resultados</h2>
+    <div class="text-section">
+        <ul>
+            <li><strong>Concentración por Sección:</strong> La sección de <em>Primaria</em> es la más crítica, concentrando 204 días de ausencia, seguida por <em>Preescolar</em> (182 días).</li>
+            <li><strong>Motivos Predominantes:</strong> El motivo <em>"Personal"</em> es la principal causa de inasistencia (427 días en total), superando a los permisos por citas médicas (158 días).</li>
+            <li><strong>Estacionalidad:</strong> Los datos revelan un pico crítico en <em>Septiembre</em> con 532 días de ausencia acumulados.</li>
+        </ul>
+    </div>
+
+    <h2>Recomendaciones Gerenciales</h2>
+    <div class="text-section" style="border-left-color: var(--primary-blue);">
+        <ul>
+            <li><strong>Auditoría de Permisos:</strong> Se recomienda a Recursos Humanos implementar una política más estricta para la aprobación de licencias personales.</li>
+            <li><strong>Plan de Choque para Septiembre:</strong> Diseñar un plan de contingencia (cobertura de personal) ante el pico histórico presentado en este mes.</li>
+            <li><strong>Salud Preventiva:</strong> Organizar jornadas de salud in-house para que el personal no tenga que ausentarse jornadas completas.</li>
+        </ul>
+    </div>
+
+    <h2>Consulta Interactiva por Empleado</h2>
+    <div class="search-box">
+        <label for="empleadoSelect">Seleccione un empleado:</label>
+        <select id="empleadoSelect">
+            <option value="">-- Seleccionar --</option>
+            <option value="ANGÉLICA DEL SOCORRO RIVERA SANJUAN">ANGÉLICA DEL SOCORRO RIVERA SANJUAN</option>
+            <option value="MONICA MARIA VENGOECHEA LAFAURIE">MONICA MARIA VENGOECHEA LAFAURIE</option>
+            <option value="JOSE VARGAS RUEDA">JOSE VARGAS RUEDA</option>
+            <option value="MARÍA CLAUDIA MARTÍNEZ PRASCA">MARÍA CLAUDIA MARTÍNEZ PRASCA</option>
+            <option value="NICOLLE STEFANIA ROJAS ROJAS">NICOLLE STEFANIA ROJAS ROJAS</option>
+        </select>
+        <button onclick="consultarEmpleado()">Consultar</button>
+    </div>
+
+    <div id="personalDashboard" class="personal-dashboard">
+        <h3 id="nombreEmpleado" style="color: var(--primary-blue);"></h3>
+        <p>Total de días ausente: <strong id="totalDiasEmpleado" style="color: var(--primary-green); font-size: 20px;"></strong></p>
+        
+        <div class="personal-charts">
+            <div class="chart-container">
+                <canvas id="chartPersonalMeses"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="chartPersonalMotivos"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const seccionData = {"Administrativo": 70, "Preescolar": 182, "Primaria": 204, "Secundaria": 139};
+    const motivoData = {"Calamidad Domestica": 7, "Cita Medica": 167, "Dia Compensatorio": 14, "Personal": 427, "Rep. Institucional": 3};
+    const mesData = {"Agosto": 16, "Septiembre": 532, "Octubre": 61, "Noviembre": 6, "Diciembre": 3};
+    
+    const personalData = {
+        "ANGÉLICA DEL SOCORRO RIVERA SANJUAN": {total: 13, meses: {"Agosto": 3, "Octubre": 1, "Diciembre": 3}, motivos: {"Personal": 1, "Rep. Institucional": 9, "Compensatorio": 3}},
+        "MONICA MARIA VENGOECHEA LAFAURIE": {total: 18, meses: {"Agosto": 14, "Octubre": 2}, motivos: {"Personal": 16, "Cita Medica": 1, "Compensatorio": 1}},
+        "JOSE VARGAS RUEDA": {total: 11, meses: {"Noviembre": 5, "Diciembre": 2}, motivos: {"Calamidad": 5, "Rep. Institucional": 4, "Compensatorio": 2}},
+        "MARÍA CLAUDIA MARTÍNEZ PRASCA": {total: 10, meses: {"Septiembre": 2, "Octubre": 2, "Noviembre": 1}, motivos: {"Rep. Institucional": 7, "Personal": 1, "Compensatorio": 2}},
+        "NICOLLE STEFANIA ROJAS ROJAS": {total: 11, meses: {"Septiembre": 10, "Octubre": 1}, motivos: {"Personal": 11}}
+    };
+
+    const colors = ['#002878', '#009933', '#4da6ff', '#66cc80', '#ff9933'];
+
+    new Chart(document.getElementById('chartSecciones'), {
+        type: 'bar',
+        data: { labels: Object.keys(seccionData), datasets: [{ label: 'Días Perdidos', data: Object.values(seccionData), backgroundColor: colors[0], borderRadius: 5 }] }
+    });
+
+    new Chart(document.getElementById('chartMotivos'), {
+        type: 'doughnut',
+        data: { labels: Object.keys(motivoData), datasets: [{ data: Object.values(motivoData), backgroundColor: colors }] },
+        options: { plugins: { title: { display: true, text: 'Ausencias por Motivos' } } }
+    });
+
+    new Chart(document.getElementById('chartMeses'), {
+        type: 'line',
+        data: { labels: Object.keys(mesData), datasets: [{ label: 'Días Perdidos por Mes', data: Object.values(mesData), borderColor: colors[1], backgroundColor: 'rgba(0, 153, 51, 0.2)', fill: true, tension: 0.3 }] }
+    });
+
+    let chartPersMeses = null;
+    let chartPersMotivos = null;
+
+    function consultarEmpleado() {
+        const nombre = document.getElementById('empleadoSelect').value;
+        const dashboard = document.getElementById('personalDashboard');
+        if (!nombre) { dashboard.style.display = 'none'; return; }
+        const data = personalData[nombre];
+        document.getElementById('nombreEmpleado').innerText = 'Comportamiento de: ' + nombre;
+        document.getElementById('totalDiasEmpleado').innerText = data.total;
+        dashboard.style.display = 'block';
+
+        if (chartPersMeses) chartPersMeses.destroy();
+        chartPersMeses = new Chart(document.getElementById('chartPersonalMeses'), { type: 'bar', data: { labels: Object.keys(data.meses), datasets: [{ label: 'Días', data: Object.values(data.meses), backgroundColor: colors[1] }] }, options: { plugins: { title: { display: true, text: 'Meses' } } } });
+
+        if (chartPersMotivos) chartPersMotivos.destroy();
+        chartPersMotivos = new Chart(document.getElementById('chartPersonalMotivos'), { type: 'pie', data: { labels: Object.keys(data.motivos), datasets: [{ data: Object.values(data.motivos), backgroundColor: colors }] }, options: { plugins: { title: { display: true, text: 'Motivos' } } } });
+    }
+</script>
+</body>
+</html>
